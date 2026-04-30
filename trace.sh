@@ -132,7 +132,8 @@ case "$cmd" in
       printf 'Provide SQL as the second argument.\n' >&2
       exit 1
     fi
-    docker_exec_pguser_noninteractive "$PG_BIN_DIR/psql -h 127.0.0.1 -p 5432 -d postgres -c \"$sql\""
+    printf '%s\n' "$sql" | docker exec -i "$CONTAINER_NAME" /bin/bash -lc \
+      "su - pguser -c 'LD_LIBRARY_PATH=$PG_LIB_DIR $PG_BIN_DIR/psql -h 127.0.0.1 -p 5432 -d postgres'"
     ;;
   runfile)
     ensure_container_running
